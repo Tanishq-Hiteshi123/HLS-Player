@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; 
+  appearance: none; 
+  width: 0; 
+  height: 0;
+}
+
+
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
