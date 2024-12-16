@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../Context/userContext";
 import Hls from "hls.js";
 import SongInfo from "../Components/SongInfo";
@@ -8,6 +8,12 @@ import HLSPlayer from "../Components/HLSPlayer";
 function AudioHLS() {
   const { fileUrl } = useContext(UserContext);
   const audioRef = useRef(null);
+
+
+    const [progress, setProgress] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const intervalRef = useRef(null)
   
  
   console.log(fileUrl, "this is file URL   ");
@@ -23,19 +29,93 @@ function AudioHLS() {
       hls.loadSource(fileUrl);
       hls.attachMedia(audioRef.current);
 
-      //   hls.on(Hls.Events.MANIFEST_PARSED , () =>{
-      //        // Check video levels for resolution
-      //     if (hls.levels.some((level) => level.width > 0 || level.height > 0)) {
-      //         console.log("object of video")
-      //         hls.attachMedia(videoRef.current)
-      //       } else if(hls.levels[0].audioCodec) {
-      //         console.log("object of Audio")
-      //         hls.attachMedia(audioRef.current);
-      //       }
-
-      //   })
+    
     }
   }, [fileUrl]);
+
+
+  const handleSeek = (event) => {
+  
+   
+        audioRef.current.currentTime = event.target.value; 
+   
+    // console.log(audioRef.current.currentTime , "current Audio Value")
+    setProgress(event.target.value); 
+
+  };
+
+  // console.log(videoRef , audioRef)
+
+  const handlePlayMusic = () => {
+    console.log("Playing the music");
+  
+    console.log("Playing the audio " , audioRef)
+      audioRef.current.play()
+   
+  
+    setIsPlaying(!isPlaying);
+    intervalRef.current = setInterval(handleTimeUpdate , 1000)
+  };
+  const handlePauseMusic = () => {
+    console.log("Paused The Music");
+    console.log(audioRef.current)
+
+    audioRef.current.pause()
+   
+ 
+    setIsPlaying(!isPlaying);
+    clearInterval(intervalRef.current)
+  };
+
+  const handleTimeUpdate = (e) =>{
+    // console.log(progress)
+    // console.log(audioRef.current.currentTime , audioRef.current.duration)
+    
+        setDuration(audioRef.current.duration)
+        setProgress(audioRef.current.currentTime)
+  
+
+    if (audioRef.current) {
+        if (Math.floor(audioRef.current.currentTime) == Math.floor(audioRef.current.duration)) {
+            setIsPlaying(false);
+            setProgress(0)
+            clearInterval(intervalRef.current)
+      }
+    }
+ 
+  }
+
+  const handleFastForward = () =>{
+    
+    //   console.log("handling fast forwarding")
+    //   console.log(audioRef.current.currentTime , progress)
+      const updatedProgress = progress + 10;
+
+    
+      setProgress(updatedProgress)
+   
+        audioRef.current.currentTime = updatedProgress;
+    
+
+  }
+  const handleFastBackward = () => {
+       console.log("Handling the fast Backward")
+       const updatedProgress = progress - 10;
+       if (updatedProgress < 0) {
+         setProgress(0);
+        
+            audioRef.current.currentTime = 0;
+        
+       }
+       else {
+           setProgress(updatedProgress);
+          
+            audioRef.current.currentTime = updatedProgress;
+        
+         
+       }
+
+  }
 
   return (
     <div className="h-screen w-full bg-gray-200">
@@ -57,19 +137,19 @@ function AudioHLS() {
               min="0"
               max={duration}
               value={progress}
-            //   onChange={handleSeek}
+              onChange={handleSeek}
               className="  h-1 w-full bg-gray-200 rounded-lg appearance-none cursor-pointer "
-              // style={{
-              //   background: `linear-gradient(to right, #facc15 ${
-              //     (progress / duration) * 100 || 0
-              //   }%, #e5e5e5 ${(progress / duration) * 100 || 0}%)`,
-              // }}
-            //   onTimeUpdate={handleTimeUpdate}
               style={{
                 background: `linear-gradient(to right, #facc15 ${
                   (progress / duration) * 100 || 0
                 }%, #e5e5e5 ${(progress / duration) * 100 || 0}%)`,
               }}
+              onTimeUpdate={handleTimeUpdate}
+              // style={{
+              //   background: `linear-gradient(to right, #facc15 ${
+              //     (progress / duration) * 100 || 0
+              //   }%, #e5e5e5 ${(progress / duration) * 100 || 0}%)`,
+              // }}
             />
             <div className="w-full">
               <HLSPlayer
