@@ -6,6 +6,7 @@ import { IoCloseSharp } from "react-icons/io5";
 import { FaPlay } from "react-icons/fa";
 import { formatTime } from "../utils";
 import { useEffect } from "react";
+import { IoIosFastforward } from "react-icons/io";
 
 function Player({
   isPlaying,
@@ -20,7 +21,8 @@ function Player({
   setDuration,
   setProgress,
   sound,
-  setSound
+  setSound,
+  handleForward
 }) {
 
 
@@ -58,7 +60,7 @@ function Player({
           <IoMdMusicalNote size={"1.3rem"} color="white" />
           <h1>Problem - {songs[currentSong].title}</h1>
         </div>
-        <div className="flex items-center justify-between w-full">
+        <div className="flex items-center justify-between w-full mt-4 ">
           <h2 className="startTime">{formatTime( progress)}</h2>
           <h2 className="endTime">{formatTime(duration)}</h2>
         </div>
@@ -91,6 +93,8 @@ function Player({
           size={"1.58rem"}
           onClick={handleNextSong}
         />
+
+        <IoIosFastforward size={"1.58rem"} className="cursor-pointer"  onClick={handleForward}/>
 
         <IoCloseSharp
           className="cursor-pointer"

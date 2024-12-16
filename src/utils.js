@@ -1,3 +1,5 @@
+import Hls from "hls.js";
+
 export const formatTime = (duration) =>{
     // Input :- 99.802 :-
 
@@ -6,7 +8,6 @@ export const formatTime = (duration) =>{
     // Step 2 :- get the hours from it :- let hours = (99 / 3600) > 0 && duration = 99 % 3600 
     
     let originalDuration = Math.floor(duration);
-    console.log("progress Time " , duration)
      
     let hours = originalDuration / 3600;
     let minutes = 0;
@@ -17,10 +18,8 @@ export const formatTime = (duration) =>{
         
     }
 
-    console.log(originalDuration)
 
     if (originalDuration > 0) {
-        console.log(originalDuration)
           minutes = originalDuration / 60;
 
          if (minutes > 0){
@@ -32,7 +31,6 @@ export const formatTime = (duration) =>{
     if (originalDuration > 0){
           seconds = originalDuration;
     }
-    // Output :- 00:01:29
 
     let ans = []
    Math.floor(hours) > 9 ? ans.push(Math.floor(hours)) : ans.push("0" + Math.floor(hours))
@@ -45,3 +43,33 @@ export const formatTime = (duration) =>{
      
 
 }
+
+export const identifyTheType = (url) => {
+    return new Promise((resolve, reject) => {
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+  
+        hls.loadSource(url);
+  
+        // Wait for the manifest to be parsed
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          if (hls.levels.some((level) => level.width || level.height)) {
+            console.log(hls.levels.length, "video");
+            resolve(100000); // Return a value for video
+          } else if (hls.levels.length == 1) {
+            console.log(hls.audioTracks.length, "audio");
+            resolve(90000); // Return a value for audio
+          } else {
+            reject("Unable to determine file type.");
+          }
+        });
+  
+        // Handle errors
+        hls.on(Hls.Events.ERROR, (event, data) => {
+          reject(`HLS.js error: ${data.details}`);
+        });
+      } else {
+        reject("HLS.js is not supported in this browser.");
+      }
+    });
+  };
