@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { UserContext } from '../Context/userContext'
 import { useContext, useState } from 'react'
 import { identifyTheType } from '../utils'
+import FileUploadation from '../Components/FileUploadation'
 
 function Home() {
   const navigate = useNavigate()
@@ -38,17 +39,13 @@ function Home() {
         });
 
        }
-       else {
-        
-            
-
-       }
+      
        
 
   }
   return (
-    <div className='h-screen w-full bg-gradient-to-r from-indigo-500 '>
-   <div className='h-[70vh] flex items-center gap-5 justify-center  '>
+    <div className='h-full w-full bg-gradient-to-r from-indigo-500 '>
+   <div className='h-[100vh] flex items-center gap-5 justify-center  '>
    <div className='w-[20vw] flex flex-col items-start gap-5'>
         <div>
         <h1 className='text-6xl font-bold text-purple-800'>Video</h1>
@@ -67,6 +64,7 @@ function Home() {
          <input className='px-4 w-[50%] py-2 transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-200' type="text" name='url' onChange={handleURL} value={url} />
          <button className='bg-purple-500 text-white p-2 rounded' type='submit'>Upload</button>
        </form>
+       {/* <FileUploadation /> */}
     </div>
   )
 }

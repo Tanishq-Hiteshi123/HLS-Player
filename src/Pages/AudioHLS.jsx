@@ -120,7 +120,7 @@ function AudioHLS() {
   return (
     <div className="h-screen w-full bg-gray-200">
       <div className="mainDiv h-[85%] w-[100%]  flex items-center justify-center flex-col gap-8">
-        <div className="flex items-center justify-center flex-col gap-5">
+        <div className="flex items-center justify-center flex-col gap-12">
           <img
             src="https://th.bing.com/th/id/R.2ca8d95f9c191fd075b110df2305a325?rik=c477oHRVbg63qQ&riu=http%3a%2f%2f4.bp.blogspot.com%2f-hvHI39pmEPU%2fUcGXas2p3FI%2fAAAAAAAACpg%2fngg10AsvzIg%2fs1600%2fRecording%2bArtist.jpg&ehk=vD3pRG%2fXqpsmQKInnYp4JgCzkROKRFDTq9w5Lj45J6U%3d&risl=&pid=ImgRaw&r=0"
             alt=""
