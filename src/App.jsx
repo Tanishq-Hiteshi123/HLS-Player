@@ -5,6 +5,8 @@ import Login from './Pages/Login'
 import PrivateRouter from './Components/PrivateRouter'
 import VideoHLS from './Pages/VideoHLS'
 import AudioHLS from './Pages/AudioHLS'
+import AudioMP3 from './Pages/AudioMP3'
+import VideoMP4 from './Pages/VideoMP4'
 
 function App() {
 
@@ -21,7 +23,8 @@ function App() {
         <Route path='/'  element = {<HomeComponents />}/>
         <Route path='/video/hls' element = {<VideoHLS />} />
         <Route path='/audio/hls' element = {< AudioHLS/>} />
-        {/* <Route path='/videoHLS' element = {<VideoHLS />} /> */}
+        <Route path='/audio/mp3' element = {<AudioMP3 />} />
+        <Route path='/video/mp4' element = {<VideoMP4 />} />
         </Route>
         <Route path='/login' element = {<Login />} />
       </Routes>

@@ -14,7 +14,8 @@ function AudioHLS() {
     const [duration, setDuration] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const intervalRef = useRef(null)
-  
+    const [currentSpeed , setCurrentSpeed] = useState(1)
+    const [currentVolume , setCurrentVolume] = useState(0.5)
  
   console.log(fileUrl, "this is file URL   ");
 
@@ -76,7 +77,7 @@ function AudioHLS() {
   
 
     if (audioRef.current) {
-        if (Math.floor(audioRef.current.currentTime) == Math.floor(audioRef.current.duration)) {
+        if (Math.floor(audioRef.current.currentTime) >= Math.floor(audioRef.current.duration)) {
             setIsPlaying(false);
             setProgress(0)
             clearInterval(intervalRef.current)
@@ -116,6 +117,33 @@ function AudioHLS() {
        }
 
   }
+
+  const handleDownLoadFile = () =>{
+    
+      console.log("Handling the download file")
+
+
+  }
+
+  const handleSpeedChange = (e) =>{
+     setCurrentSpeed(Number(e.target.value))
+  }
+  const handleVolumeChange = (e) =>{
+     setCurrentVolume(Number(e.target.value))
+  }
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = currentSpeed;
+    }
+  }, [currentSpeed]);
+
+      useEffect(() => {
+        if (audioRef.current) {
+          audioRef.current.volume = currentVolume;
+        }
+      }, [currentVolume]);
+  console.log("currentSpeed " , currentSpeed)
 
   return (
     <div className="h-screen w-full bg-gray-200">
@@ -160,6 +188,11 @@ function AudioHLS() {
                 isPlaying={isPlaying}
                 handleFastForward = {handleFastForward}
                 handleFastBackward = {handleFastBackward}
+                handleDownLoadFile = {handleDownLoadFile}
+                currentSpeed = {currentSpeed}
+                handleSpeedChange = {handleSpeedChange}
+                currentVolume={currentVolume}
+                handleVolumeChange={handleVolumeChange}
               />
             </div>
           </div>

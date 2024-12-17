@@ -1,63 +1,22 @@
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { UserContext } from '../Context/userContext';
+import HLSPlayer from '../Components/HLSPlayer';
 
+function VideoMP4() {
 
-
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { UserContext } from "../Context/userContext";
-import Hls from "hls.js";
-import HLSPlayer from "../Components/HLSPlayer";
-
-function VideoHLS() {
+   const [progress, setProgress] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [isPlaying, setIsPlaying] = useState(false);
   const { fileUrl } = useContext(UserContext);
   const videoRef = useRef(null);
+    const intervalRef = useRef(null);
 
-  const location = window.location.pathname;
+    
+    
+    const [currentSpeed , setCurrentSpeed] = useState(1)
+    const [currentVolume , setCurrentVolume] = useState(0.5)
 
-  console.log("location " , location)
-
-  const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [availableResolutions, setAvailableResolutions] = useState([]);
-  const [selectedResolution, setSelectedResolution] = useState("auto");
-  const hlsRef = useRef(null); // To store the Hls.js instance
-  const intervalRef = useRef(null);
-  const [isVideo , setIsVideo] = useState(location.includes("video") ? true : false)
-  const [currentSpeed , setCurrentSpeed] = useState(1)
-  const [currentVolume , setCurrentVolume] = useState(0.5)
-
-  useEffect(() =>{
-     setIsVideo(location.includes("video") ? true : false)
-  } , [location])
-  useEffect(() => {
-    if (!Hls.isSupported()) {
-      console.log("HLS is not supported");
-      return;
-    }
-
-    const hls = new Hls();
-    hlsRef.current = hls; // Save the Hls instance for later use
-
-    hls.loadSource(fileUrl);
-    hls.attachMedia(videoRef.current);
-    console.log(videoRef.current.volume)
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      // Extract quality levels
-      const levels = hls.levels.map((level, index) => ({
-        label: `${level.height}p (${Math.round(level.bitrate / 1000)} kbps)`,
-        index,
-      }));
-
-      setAvailableResolutions([{ label: "Auto", index: -1 }, ...levels]);
-    });
-
-    return () => {
-      hls.destroy();
-    };
-  }, [fileUrl]);
-
-
-
-  const handleSeek = (event) => {
+ const handleSeek = (event) => {
     videoRef.current.currentTime = event.target.value;
     setProgress(event.target.value);
   };
@@ -97,15 +56,7 @@ function VideoHLS() {
     videoRef.current.currentTime = updatedProgress;
   };
 
-  const handleResolutionChange = (event) => {
-    const levelIndex = parseInt(event.target.value);
-    console.log(levelIndex , "levelIndex")
-    setSelectedResolution(event.target.value);
 
-    if (hlsRef.current) {
-      hlsRef.current.currentLevel = levelIndex;
-    }
-  };
 
    const handleSpeedChange = (e) =>{
        setCurrentSpeed(Number(e.target.value))
@@ -116,6 +67,10 @@ function VideoHLS() {
       setCurrentVolume(Number(e.target.value))
 
     }
+
+    useEffect(() =>{
+       videoRef.current.src = fileUrl
+    } , [fileUrl])
   
     useEffect(() => {
       if (videoRef.current) {
@@ -160,10 +115,9 @@ function VideoHLS() {
               isPlaying={isPlaying}
               handleFastForward={handleFastForward}
               handleFastBackward={handleFastBackward}
-              selectedResolution = {selectedResolution}
-              handleResolutionChange = {handleResolutionChange}
-              availableResolutions = {availableResolutions}
-              isVideo = {isVideo}
+            
+           
+             
               currentSpeed={currentSpeed}
               handleSpeedChange={handleSpeedChange}
               currentVolume = {currentVolume}
@@ -177,4 +131,5 @@ function VideoHLS() {
   );
 }
 
-export default VideoHLS;
+
+export default VideoMP4

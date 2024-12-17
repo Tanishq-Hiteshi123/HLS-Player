@@ -1,18 +1,18 @@
 
-function FileUploadation() {
-    const handleFileChange = (e) =>{
+function FileUploadation({handleURLSubmit}) {
+    // const handleFileChange = (e) =>{
         
-          console.log(e.target.files[0])
+    //       console.log(e.target.files[0])
 
-    }
+    // }
   return (
-    <div className="w-full  flex items-center justify-center">
+    <div className="w-full   flex items-center justify-center">
       <div className="file-input">
       <input
         type="file"
         name="file-input"
         id="file-input"
-        onChange = {handleFileChange}
+        onChange = {handleURLSubmit}
         className="file-input__input"
       />
       <label className="file-input__label" htmlFor="file-input">
@@ -33,6 +33,7 @@ function FileUploadation() {
           ></path>
         </svg>
         <span>Upload file</span></label>
+       
     </div>
     </div>
   )
