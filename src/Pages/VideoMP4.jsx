@@ -70,6 +70,7 @@ function VideoMP4() {
 
     useEffect(() =>{
        videoRef.current.src = fileUrl
+       console.log(fileUrl , "FileURL")
     } , [fileUrl])
   
     useEffect(() => {
@@ -83,6 +84,8 @@ function VideoMP4() {
         videoRef.current.volume = currentVolume;
       }
     }, [currentVolume]);
+
+  
 
   return (
     <div className="h-screen w-full bg-gray-200">

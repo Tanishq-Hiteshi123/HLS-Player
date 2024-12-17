@@ -1,10 +1,6 @@
 
-function FileUploadation({handleURLSubmit}) {
-    // const handleFileChange = (e) =>{
-        
-    //       console.log(e.target.files[0])
-
-    // }
+function FileUploadation({handleFileUpload}) {
+   
   return (
     <div className="w-full   flex items-center justify-center">
       <div className="file-input">
@@ -12,7 +8,7 @@ function FileUploadation({handleURLSubmit}) {
         type="file"
         name="file-input"
         id="file-input"
-        onChange = {handleURLSubmit}
+        onChange = {handleFileUpload}
         className="file-input__input"
       />
       <label className="file-input__label" htmlFor="file-input">
