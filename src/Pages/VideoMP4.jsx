@@ -1,22 +1,19 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import { UserContext } from '../Context/userContext';
-import HLSPlayer from '../Components/HLSPlayer';
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { UserContext } from "../Context/userContext";
+import HLSPlayer from "../Components/HLSPlayer";
 
 function VideoMP4() {
-
-   const [progress, setProgress] = useState(0);
-    const [duration, setDuration] = useState(0);
-    const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const { fileUrl } = useContext(UserContext);
   const videoRef = useRef(null);
-    const intervalRef = useRef(null);
+  const intervalRef = useRef(null);
 
-    
-    
-    const [currentSpeed , setCurrentSpeed] = useState(1)
-    const [currentVolume , setCurrentVolume] = useState(0.5)
+  const [currentSpeed, setCurrentSpeed] = useState(1);
+  const [currentVolume, setCurrentVolume] = useState(0.5);
 
- const handleSeek = (event) => {
+  const handleSeek = (event) => {
     videoRef.current.currentTime = event.target.value;
     setProgress(event.target.value);
   };
@@ -56,43 +53,35 @@ function VideoMP4() {
     videoRef.current.currentTime = updatedProgress;
   };
 
+  const handleSpeedChange = (e) => {
+    setCurrentSpeed(Number(e.target.value));
+  };
 
+  const handleVolumeChange = (e) => {
+    setCurrentVolume(Number(e.target.value));
+  };
 
-   const handleSpeedChange = (e) =>{
-       setCurrentSpeed(Number(e.target.value))
+  useEffect(() => {
+    videoRef.current.src = fileUrl;
+  }, [fileUrl]);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = currentSpeed;
     }
+  }, [currentSpeed]);
 
-    const handleVolumeChange = (e) =>{
-      
-      setCurrentVolume(Number(e.target.value))
-
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.volume = currentVolume;
     }
-
-    useEffect(() =>{
-       videoRef.current.src = fileUrl
-       console.log(fileUrl , "FileURL")
-    } , [fileUrl])
-  
-    useEffect(() => {
-      if (videoRef.current) {
-        videoRef.current.playbackRate = currentSpeed;
-      }
-    }, [currentSpeed]);
-
-    useEffect(() => {
-      if (videoRef.current) {
-        videoRef.current.volume = currentVolume;
-      }
-    }, [currentVolume]);
-
-  
+  }, [currentVolume]);
 
   return (
     <div className="h-screen w-full bg-gray-200">
       <div className="mainDiv h-[85%] w-[100%] flex items-center justify-center flex-col gap-8">
         <div className="h-[100%] w-[100%] flex items-center justify-center flex-col gap-5">
           <video className="h-[70%] w-[70%] rounded-xl" ref={videoRef}></video>
-         
         </div>
         <div className="fixed bottom-0 w-full flex items-center justify-center flex-col">
           <input
@@ -118,14 +107,10 @@ function VideoMP4() {
               isPlaying={isPlaying}
               handleFastForward={handleFastForward}
               handleFastBackward={handleFastBackward}
-            
-           
-             
               currentSpeed={currentSpeed}
               handleSpeedChange={handleSpeedChange}
-              currentVolume = {currentVolume}
-              handleVolumeChange = {handleVolumeChange}
-
+              currentVolume={currentVolume}
+              handleVolumeChange={handleVolumeChange}
             />
           </div>
         </div>
@@ -134,5 +119,4 @@ function VideoMP4() {
   );
 }
 
-
-export default VideoMP4
+export default VideoMP4;

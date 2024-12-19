@@ -11,8 +11,7 @@ import VideoMP4 from './Pages/VideoMP4'
 function App() {
 
    const HomeComponents = lazy(() => import("./Pages/Home"))
-   const MainComponents = lazy(() => import ("./Pages/Main"))
-   const MainHLSComponents = lazy(() => import("./Pages/MainHLS"))
+
   return (
     <>
      <Router>

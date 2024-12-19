@@ -1,7 +1,4 @@
-
-
-
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../Context/userContext";
 import Hls from "hls.js";
 import HLSPlayer from "../Components/HLSPlayer";
@@ -12,22 +9,22 @@ function VideoHLS() {
 
   const location = window.location.pathname;
 
-  console.log("location " , location)
-
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [availableResolutions, setAvailableResolutions] = useState([]);
   const [selectedResolution, setSelectedResolution] = useState("auto");
-  const hlsRef = useRef(null); // To store the Hls.js instance
+  const hlsRef = useRef(null);
   const intervalRef = useRef(null);
-  const [isVideo , setIsVideo] = useState(location.includes("video") ? true : false)
-  const [currentSpeed , setCurrentSpeed] = useState(1)
-  const [currentVolume , setCurrentVolume] = useState(0.5)
+  const [isVideo, setIsVideo] = useState(
+    location.includes("video") ? true : false
+  );
+  const [currentSpeed, setCurrentSpeed] = useState(1);
+  const [currentVolume, setCurrentVolume] = useState(0.5);
 
-  useEffect(() =>{
-     setIsVideo(location.includes("video") ? true : false)
-  } , [location])
+  useEffect(() => {
+    setIsVideo(location.includes("video") ? true : false);
+  }, [location]);
   useEffect(() => {
     if (!Hls.isSupported()) {
       console.log("HLS is not supported");
@@ -35,13 +32,11 @@ function VideoHLS() {
     }
 
     const hls = new Hls();
-    hlsRef.current = hls; // Save the Hls instance for later use
+    hlsRef.current = hls;
 
     hls.loadSource(fileUrl);
     hls.attachMedia(videoRef.current);
-    console.log(videoRef.current.volume)
     hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      // Extract quality levels
       const levels = hls.levels.map((level, index) => ({
         label: `${level.height}p (${Math.round(level.bitrate / 1000)} kbps)`,
         index,
@@ -54,8 +49,6 @@ function VideoHLS() {
       hls.destroy();
     };
   }, [fileUrl]);
-
-
 
   const handleSeek = (event) => {
     videoRef.current.currentTime = event.target.value;
@@ -99,7 +92,6 @@ function VideoHLS() {
 
   const handleResolutionChange = (event) => {
     const levelIndex = parseInt(event.target.value);
-    console.log(levelIndex , "levelIndex")
     setSelectedResolution(event.target.value);
 
     if (hlsRef.current) {
@@ -107,34 +99,31 @@ function VideoHLS() {
     }
   };
 
-   const handleSpeedChange = (e) =>{
-       setCurrentSpeed(Number(e.target.value))
+  const handleSpeedChange = (e) => {
+    setCurrentSpeed(Number(e.target.value));
+  };
+
+  const handleVolumeChange = (e) => {
+    setCurrentVolume(Number(e.target.value));
+  };
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = currentSpeed;
     }
+  }, [currentSpeed]);
 
-    const handleVolumeChange = (e) =>{
-      
-      setCurrentVolume(Number(e.target.value))
-
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.volume = currentVolume;
     }
-  
-    useEffect(() => {
-      if (videoRef.current) {
-        videoRef.current.playbackRate = currentSpeed;
-      }
-    }, [currentSpeed]);
-
-    useEffect(() => {
-      if (videoRef.current) {
-        videoRef.current.volume = currentVolume;
-      }
-    }, [currentVolume]);
+  }, [currentVolume]);
 
   return (
     <div className="h-screen w-full bg-gray-200">
       <div className="mainDiv h-[85%] w-[100%] flex items-center justify-center flex-col gap-8">
         <div className="h-[100%] w-[100%] flex items-center justify-center flex-col gap-5">
           <video className="h-[70%] w-[70%] rounded-xl" ref={videoRef}></video>
-         
         </div>
         <div className="fixed bottom-0 w-full flex items-center justify-center flex-col">
           <input
@@ -160,15 +149,14 @@ function VideoHLS() {
               isPlaying={isPlaying}
               handleFastForward={handleFastForward}
               handleFastBackward={handleFastBackward}
-              selectedResolution = {selectedResolution}
-              handleResolutionChange = {handleResolutionChange}
-              availableResolutions = {availableResolutions}
-              isVideo = {isVideo}
+              selectedResolution={selectedResolution}
+              handleResolutionChange={handleResolutionChange}
+              availableResolutions={availableResolutions}
+              isVideo={isVideo}
               currentSpeed={currentSpeed}
               handleSpeedChange={handleSpeedChange}
-              currentVolume = {currentVolume}
-              handleVolumeChange = {handleVolumeChange}
-
+              currentVolume={currentVolume}
+              handleVolumeChange={handleVolumeChange}
             />
           </div>
         </div>
