@@ -55,18 +55,6 @@ function VideoHLS() {
     setProgress(event.target.value);
   };
 
-  const handlePlayMusic = () => {
-    videoRef.current.play();
-    setIsPlaying(true);
-    intervalRef.current = setInterval(handleTimeUpdate, 1000);
-  };
-
-  const handlePauseMusic = () => {
-    videoRef.current.pause();
-    setIsPlaying(false);
-    clearInterval(intervalRef.current);
-  };
-
   const handleTimeUpdate = () => {
     setDuration(videoRef.current.duration);
     setProgress(videoRef.current.currentTime);
@@ -77,47 +65,6 @@ function VideoHLS() {
       clearInterval(intervalRef.current);
     }
   };
-
-  const handleFastForward = () => {
-    const updatedProgress = progress + 10;
-    setProgress(updatedProgress);
-    videoRef.current.currentTime = updatedProgress;
-  };
-
-  const handleFastBackward = () => {
-    const updatedProgress = Math.max(progress - 10, 0);
-    setProgress(updatedProgress);
-    videoRef.current.currentTime = updatedProgress;
-  };
-
-  const handleResolutionChange = (event) => {
-    const levelIndex = parseInt(event.target.value);
-    setSelectedResolution(event.target.value);
-
-    if (hlsRef.current) {
-      hlsRef.current.currentLevel = levelIndex;
-    }
-  };
-
-  const handleSpeedChange = (e) => {
-    setCurrentSpeed(Number(e.target.value));
-  };
-
-  const handleVolumeChange = (e) => {
-    setCurrentVolume(Number(e.target.value));
-  };
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = currentSpeed;
-    }
-  }, [currentSpeed]);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.volume = currentVolume;
-    }
-  }, [currentVolume]);
 
   return (
     <div className="h-screen w-full bg-gray-200">
@@ -144,19 +91,22 @@ function VideoHLS() {
             <HLSPlayer
               progress={progress}
               duration={duration}
-              handlePlayMusic={handlePlayMusic}
-              handlePauseMusic={handlePauseMusic}
+              fileUrl={fileUrl}
               isPlaying={isPlaying}
-              handleFastForward={handleFastForward}
-              handleFastBackward={handleFastBackward}
-              selectedResolution={selectedResolution}
-              handleResolutionChange={handleResolutionChange}
-              availableResolutions={availableResolutions}
-              isVideo={isVideo}
+              setCurrentSpeed={setCurrentSpeed}
+              setCurrentVolume={setCurrentVolume}
+              setProgress={setProgress}
               currentSpeed={currentSpeed}
-              handleSpeedChange={handleSpeedChange}
               currentVolume={currentVolume}
-              handleVolumeChange={handleVolumeChange}
+              ElemRef={videoRef}
+              setIsPlaying={setIsPlaying}
+              intervalRef={intervalRef}
+              handleTimeUpdate={handleTimeUpdate}
+              availableResolutions={availableResolutions}
+              selectedResolution={selectedResolution}
+              setSelectedResolution={setSelectedResolution}
+              isVideo={isVideo}
+              hlsRef={hlsRef}
             />
           </div>
         </div>

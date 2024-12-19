@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../Context/userContext";
 import HLSPlayer from "../Components/HLSPlayer";
 
@@ -17,19 +17,6 @@ function VideoMP4() {
     videoRef.current.currentTime = event.target.value;
     setProgress(event.target.value);
   };
-
-  const handlePlayMusic = () => {
-    videoRef.current.play();
-    setIsPlaying(true);
-    intervalRef.current = setInterval(handleTimeUpdate, 1000);
-  };
-
-  const handlePauseMusic = () => {
-    videoRef.current.pause();
-    setIsPlaying(false);
-    clearInterval(intervalRef.current);
-  };
-
   const handleTimeUpdate = () => {
     setDuration(videoRef.current.duration);
     setProgress(videoRef.current.currentTime);
@@ -40,42 +27,11 @@ function VideoMP4() {
       clearInterval(intervalRef.current);
     }
   };
-
-  const handleFastForward = () => {
-    const updatedProgress = progress + 10;
-    setProgress(updatedProgress);
-    videoRef.current.currentTime = updatedProgress;
-  };
-
-  const handleFastBackward = () => {
-    const updatedProgress = Math.max(progress - 10, 0);
-    setProgress(updatedProgress);
-    videoRef.current.currentTime = updatedProgress;
-  };
-
-  const handleSpeedChange = (e) => {
-    setCurrentSpeed(Number(e.target.value));
-  };
-
-  const handleVolumeChange = (e) => {
-    setCurrentVolume(Number(e.target.value));
-  };
-
   useEffect(() => {
-    videoRef.current.src = fileUrl;
+    if (fileUrl) {
+      videoRef.current.src = fileUrl;
+    }
   }, [fileUrl]);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = currentSpeed;
-    }
-  }, [currentSpeed]);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.volume = currentVolume;
-    }
-  }, [currentVolume]);
 
   return (
     <div className="h-screen w-full bg-gray-200">
@@ -102,15 +58,17 @@ function VideoMP4() {
             <HLSPlayer
               progress={progress}
               duration={duration}
-              handlePlayMusic={handlePlayMusic}
-              handlePauseMusic={handlePauseMusic}
+              fileUrl={fileUrl}
               isPlaying={isPlaying}
-              handleFastForward={handleFastForward}
-              handleFastBackward={handleFastBackward}
+              setCurrentSpeed={setCurrentSpeed}
+              setCurrentVolume={setCurrentVolume}
+              setProgress={setProgress}
               currentSpeed={currentSpeed}
-              handleSpeedChange={handleSpeedChange}
               currentVolume={currentVolume}
-              handleVolumeChange={handleVolumeChange}
+              ElemRef={videoRef}
+              setIsPlaying={setIsPlaying}
+              intervalRef={intervalRef}
+              handleTimeUpdate={handleTimeUpdate}
             />
           </div>
         </div>

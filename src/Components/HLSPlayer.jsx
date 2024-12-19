@@ -1,10 +1,8 @@
-import React from "react";
-import { IoMdMusicalNote } from "react-icons/io";
+import React, { useEffect } from "react";
 import { availableSpeed, formatTime } from "../utils";
 import { MdSkipPrevious } from "react-icons/md";
 import { CgPlayPauseO } from "react-icons/cg";
 import { CgPlayTrackNext } from "react-icons/cg";
-import { IoCloseSharp } from "react-icons/io5";
 import { IoIosFastforward } from "react-icons/io";
 import { FaPlay } from "react-icons/fa";
 import { FaBackward } from "react-icons/fa6";
@@ -15,32 +13,95 @@ import { CgLoadbarSound } from "react-icons/cg";
 function HLSPlayer({
   progress,
   duration,
-  handlePlayMusic,
-  handlePauseMusic,
   isPlaying,
-  handleFastForward,
-  handleFastBackward,
+  handleTimeUpdate,
   selectedResolution,
   availableResolutions,
-  handleResolutionChange,
   isVideo,
-  handleDownLoadFile,
   currentSpeed,
-  handleSpeedChange,
   currentVolume,
-  handleVolumeChange
+  ElemRef,
+  setCurrentSpeed,
+  setCurrentVolume,
+  setIsPlaying,
+  intervalRef,
+  setProgress,
+  fileUrl,
+  hlsRef,
+  setSelectedResolution,
 }) {
+  const handlePlayMusic = () => {
+    ElemRef?.current?.play();
+    setIsPlaying(true);
+    intervalRef.current = setInterval(handleTimeUpdate, 1000);
+  };
+
+  const handlePauseMusic = () => {
+    ElemRef?.current?.pause();
+    setIsPlaying(false);
+    clearInterval(intervalRef?.current);
+  };
+
+  const handleFastForward = () => {
+    const updatedProgress = progress + 10;
+    setProgress(updatedProgress);
+    ElemRef.current.currentTime = updatedProgress;
+  };
+
+  const handleFastBackward = () => {
+    const updatedProgress = Math.max(progress - 10, 0);
+    setProgress(updatedProgress);
+    ElemRef.current.currentTime = updatedProgress;
+  };
+
+  const handleSpeedChange = (e) => {
+    setCurrentSpeed(Number(e.target.value));
+  };
+
+  const handleVolumeChange = (e) => {
+    setCurrentVolume(Number(e.target.value));
+  };
+
+  const handleResolutionChange = (event) => {
+    const levelIndex = parseInt(event.target.value);
+    setSelectedResolution(event.target.value);
+
+    if (hlsRef.current) {
+      hlsRef.current.currentLevel = levelIndex;
+    }
+  };
+
+  useEffect(() => {
+    ElemRef.current.src = fileUrl;
+  }, [fileUrl]);
+
+  useEffect(() => {
+    if (ElemRef.current) {
+      ElemRef.current.playbackRate = currentSpeed;
+    }
+  }, [currentSpeed]);
+
+  useEffect(() => {
+    if (ElemRef.current) {
+      ElemRef.current.volume = currentVolume;
+    }
+  }, [currentVolume]);
+
   return (
     <div className="hlsPlayer w-full h-[10%] bg-gray-900 flex items-center justify-between px-4 py-2 text-white rounded-md shadow-md">
-      {/* Left Section: Song Info */}
       <div className="flex items-center gap-2">
-         {
-           isPlaying ? <img className="h-5 w-5" src="https://cdn.pixabay.com/animation/2024/06/04/16/39/16-39-28-355_512.gif" alt="" /> :  <CgLoadbarSound size={"1.5rem"}  />
-         }
+        {isPlaying ? (
+          <img
+            className="h-5 w-5"
+            src="https://cdn.pixabay.com/animation/2024/06/04/16/39/16-39-28-355_512.gif"
+            alt=""
+          />
+        ) : (
+          <CgLoadbarSound size={"1.5rem"} />
+        )}
         <h1 className="text-lg font-medium">Now Playing: {"Dummy"}</h1>
       </div>
 
-      {/* Center Section: Controls */}
       <div className="flex items-center gap-4">
         <FaBackward
           className="cursor-pointer hover:scale-110 transition-transform"
@@ -78,17 +139,26 @@ function HLSPlayer({
           onClick={handleFastForward}
         />
 
-        {/*  Input range for volume Controller  */}
-        
-       <div className="flex w-[80%]  items-center justify-end gap-2">
-           {
-            currentVolume != 0 ? <FaVolumeUp size={"1.3rem"}/> : <FaVolumeMute size={"1.3rem"} />
-            }
-           <input type="range" onChange={handleVolumeChange} value={currentVolume} className="h-1" id="volume" name="volume" step={"0.1"} min="0" max="1" />
-       </div>
+        <div className="flex w-[80%]  items-center justify-end gap-2">
+          {currentVolume != 0 ? (
+            <FaVolumeUp size={"1.3rem"} />
+          ) : (
+            <FaVolumeMute size={"1.3rem"} />
+          )}
+          <input
+            type="range"
+            onChange={handleVolumeChange}
+            value={currentVolume}
+            className="h-1"
+            id="volume"
+            name="volume"
+            step={"0.1"}
+            min="0"
+            max="1"
+          />
+        </div>
       </div>
 
-      {/* Right Section: Resolution and Progress */}
       <div className="flex items-center gap-4">
         <div className="flex flex-col items-center">
           <h2 className="text-sm">{formatTime(progress)}</h2>
@@ -101,7 +171,7 @@ function HLSPlayer({
             onChange={handleResolutionChange}
             className="p-2 bg-gray-700 text-white rounded"
           >
-            {availableResolutions.map((resolution) => (
+            {availableResolutions?.map((resolution) => (
               <option key={resolution.index} value={resolution.index}>
                 {console.log(resolution)}
                 {resolution.label}
@@ -124,7 +194,6 @@ function HLSPlayer({
         </select>
 
         <HiDownload
-          onClick={handleDownLoadFile}
           size={"1.8rem"}
           className="cursor-pointer hover:scale-110 transition-transform"
         />

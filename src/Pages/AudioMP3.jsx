@@ -20,19 +20,6 @@ function AudioMP3() {
     setProgress(event.target.value);
   };
 
-  const handlePlayMusic = () => {
-    audioRef.current.play();
-
-    setIsPlaying(!isPlaying);
-    intervalRef.current = setInterval(handleTimeUpdate, 1000);
-  };
-  const handlePauseMusic = () => {
-    console.log(audioRef.current);
-    audioRef.current.pause();
-    setIsPlaying(!isPlaying);
-    clearInterval(intervalRef.current);
-  };
-
   const handleTimeUpdate = () => {
     setDuration(audioRef.current.duration);
     setProgress(audioRef.current.currentTime);
@@ -48,43 +35,6 @@ function AudioMP3() {
       }
     }
   };
-
-  const handleFastForward = () => {
-    const updatedProgress = progress + 10;
-    setProgress(updatedProgress);
-    audioRef.current.currentTime = updatedProgress;
-  };
-
-  const handleFastBackward = () => {
-    const updatedProgress = progress - 10;
-    if (updatedProgress < 0) {
-      setProgress(0);
-      audioRef.current.currentTime = 0;
-    } else {
-      setProgress(updatedProgress);
-      audioRef.current.currentTime = updatedProgress;
-    }
-  };
-
-  const handleSpeedChange = (e) => {
-    setCurrentSpeed(Number(e.target.value));
-  };
-
-  const handleVolumeChange = (e) => {
-    setCurrentVolume(Number(e.target.value));
-  };
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.playbackRate = currentSpeed;
-    }
-  }, [currentSpeed]);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = currentVolume;
-    }
-  }, [currentVolume]);
 
   useEffect(() => {
     if (fileUrl) {
@@ -125,15 +75,17 @@ function AudioMP3() {
             <HLSPlayer
               progress={progress}
               duration={duration}
-              handlePlayMusic={handlePlayMusic}
-              handlePauseMusic={handlePauseMusic}
+              fileUrl={fileUrl}
               isPlaying={isPlaying}
-              handleFastForward={handleFastForward}
-              handleFastBackward={handleFastBackward}
+              setCurrentSpeed={setCurrentSpeed}
+              setCurrentVolume={setCurrentVolume}
+              setProgress={setProgress}
               currentSpeed={currentSpeed}
-              handleSpeedChange={handleSpeedChange}
               currentVolume={currentVolume}
-              handleVolumeChange={handleVolumeChange}
+              ElemRef={audioRef}
+              setIsPlaying={setIsPlaying}
+              intervalRef={intervalRef}
+              handleTimeUpdate={handleTimeUpdate}
             />
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../Context/userContext";
 import Hls from "hls.js";
 import SongInfo from "../Components/SongInfo";
@@ -16,19 +16,19 @@ function AudioHLS() {
   const [currentSpeed, setCurrentSpeed] = useState(1);
   const [currentVolume, setCurrentVolume] = useState(0.5);
 
-  console.log(fileUrl, "this is file URL   ");
-
-  //  Step - 1 :- On loading of the page check the HLS Support :-
   useEffect(() => {
     if (!Hls.isSupported()) {
       console.log("HLS does not support");
       return;
-    } else {
-      const hls = new Hls();
-      console.log(fileUrl);
-      hls.loadSource(fileUrl);
-      hls.attachMedia(audioRef.current);
     }
+    const hls = new Hls();
+    console.log(fileUrl);
+    hls.loadSource(fileUrl);
+    hls.attachMedia(audioRef.current);
+
+    return () => {
+      hls.destroy();
+    };
   }, [fileUrl]);
 
   const handleSeek = (event) => {
@@ -36,74 +36,21 @@ function AudioHLS() {
     setProgress(event.target.value);
   };
 
-  const handlePlayMusic = () => {
- 
-    audioRef.current.play();
-
-    setIsPlaying(!isPlaying);
-    intervalRef.current = setInterval(handleTimeUpdate, 1000);
-  };
-  const handlePauseMusic = () => {
-    console.log(audioRef.current);
-    audioRef.current.pause();
-    setIsPlaying(!isPlaying);
-    clearInterval(intervalRef.current);
-  };
-
   const handleTimeUpdate = () => {
-
     setDuration(audioRef.current.duration);
     setProgress(audioRef.current.currentTime);
 
     if (audioRef.current) {
-      if (Math.floor(audioRef.current.currentTime) >= Math.floor(audioRef.current.duration)) {
+      if (
+        Math.floor(audioRef.current.currentTime) >=
+        Math.floor(audioRef.current.duration)
+      ) {
         setIsPlaying(false);
         setProgress(0);
         clearInterval(intervalRef.current);
       }
     }
   };
-
-  const handleFastForward = () => {
-    const updatedProgress = progress + 10;
-    setProgress(updatedProgress);
-    audioRef.current.currentTime = updatedProgress;
-  };
-
-  const handleFastBackward = () => {
-    
-    const updatedProgress = progress - 10;
-    if (updatedProgress < 0) {
-      setProgress(0);
-      audioRef.current.currentTime = 0;
-    } else {
-      setProgress(updatedProgress);
-      audioRef.current.currentTime = updatedProgress;
-    }
-  };
-
-
-
-  const handleSpeedChange = (e) => {
-    setCurrentSpeed(Number(e.target.value));
-  };
-
-  const handleVolumeChange = (e) => {
-    setCurrentVolume(Number(e.target.value));
-  };
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.playbackRate = currentSpeed;
-    }
-  }, [currentSpeed]);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = currentVolume;
-    }
-  }, [currentVolume]);
-
 
   return (
     <div className="h-screen w-full bg-gray-200">
@@ -138,15 +85,17 @@ function AudioHLS() {
             <HLSPlayer
               progress={progress}
               duration={duration}
-              handlePlayMusic={handlePlayMusic}
-              handlePauseMusic={handlePauseMusic}
+              fileUrl={fileUrl}
               isPlaying={isPlaying}
-              handleFastForward={handleFastForward}
-              handleFastBackward={handleFastBackward}
+              setCurrentSpeed={setCurrentSpeed}
+              setCurrentVolume={setCurrentVolume}
+              setProgress={setProgress}
               currentSpeed={currentSpeed}
-              handleSpeedChange={handleSpeedChange}
               currentVolume={currentVolume}
-              handleVolumeChange={handleVolumeChange}
+              ElemRef={audioRef}
+              setIsPlaying={setIsPlaying}
+              intervalRef={intervalRef}
+              handleTimeUpdate={handleTimeUpdate}
             />
           </div>
         </div>
